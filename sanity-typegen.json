@@ -1,0 +1,5 @@
+{
+  "generates": "src/lib/sanity/types.ts",
+  "path": "src/lib/sanity/schemas/**/*.ts",
+  "overloadClientMethods": false
+}
