@@ -5,6 +5,10 @@ import type { Settings } from '$lib/sanity/types';
 import type { LayoutServerLoad } from './$types';
 
 export const load: LayoutServerLoad = async () => {
-	const settings = await loadQuery<Settings>(sanityClient, getSettings);
-	return { settings };
+	try {
+		const settings = await loadQuery<Settings>(sanityClient, getSettings);
+		return { settings };
+	} catch {
+		return { settings: null };
+	}
 };

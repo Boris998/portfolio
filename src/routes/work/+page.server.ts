@@ -4,8 +4,12 @@ import { getAllProjects } from '$lib/sanity/queries';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async () => {
-	const projects = await loadQuery<SanityProject[]>(sanityClient, getAllProjects);
-	return { projects };
+	try {
+		const projects = await loadQuery<SanityProject[]>(sanityClient, getAllProjects);
+		return { projects };
+	} catch {
+		return { projects: [] };
+	}
 };
 
 type SanityProject = {

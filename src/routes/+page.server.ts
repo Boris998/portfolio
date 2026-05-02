@@ -10,12 +10,15 @@ import type { Project, Settings, Testimonial, TechStack } from '$lib/sanity/type
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async () => {
-	const [featuredProjects, settings, testimonials, techStacks] = await Promise.all([
-		loadQuery<Project[]>(sanityClient, getFeaturedProjects),
-		loadQuery<Settings>(sanityClient, getSettings),
-		loadQuery<Testimonial[]>(sanityClient, getTestimonials, { featured: true }),
-		loadQuery<TechStack[]>(sanityClient, getAllTechStacks)
-	]);
-
-	return { featuredProjects, settings, testimonials, techStacks };
+	try {
+		const [featuredProjects, settings, testimonials, techStacks] = await Promise.all([
+			loadQuery<Project[]>(sanityClient, getFeaturedProjects),
+			loadQuery<Settings>(sanityClient, getSettings),
+			loadQuery<Testimonial[]>(sanityClient, getTestimonials, { featured: true }),
+			loadQuery<TechStack[]>(sanityClient, getAllTechStacks)
+		]);
+		return { featuredProjects, settings, testimonials, techStacks };
+	} catch {
+		return { featuredProjects: [], settings: null, testimonials: [], techStacks: [] };
+	}
 };
