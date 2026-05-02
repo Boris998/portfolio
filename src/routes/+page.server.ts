@@ -1,17 +1,21 @@
 import { sanityClient } from '$lib/sanity/client';
 import { loadQuery } from '$lib/sanity/load';
-import { getFeaturedProjects } from '$lib/sanity/queries';
+import {
+	getFeaturedProjects,
+	getSettings,
+	getTestimonials,
+	getAllTechStacks
+} from '$lib/sanity/queries';
+import type { Project, Settings, Testimonial, TechStack } from '$lib/sanity/types';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async () => {
-	const featuredProjects = await loadQuery<SanityProject[]>(sanityClient, getFeaturedProjects);
-	return { featuredProjects };
-};
+	const [featuredProjects, settings, testimonials, techStacks] = await Promise.all([
+		loadQuery<Project[]>(sanityClient, getFeaturedProjects),
+		loadQuery<Settings>(sanityClient, getSettings),
+		loadQuery<Testimonial[]>(sanityClient, getTestimonials, { featured: true }),
+		loadQuery<TechStack[]>(sanityClient, getAllTechStacks)
+	]);
 
-type SanityProject = {
-	_id: string;
-	title: string;
-	slug: { current: string };
-	role: string;
-	summary: string;
+	return { featuredProjects, settings, testimonials, techStacks };
 };

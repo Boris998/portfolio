@@ -79,3 +79,17 @@ export const getTestimonials = groq`
   *[_type == "testimonial" && ($featured == null || featured == $featured)]
   | order(_createdAt desc)
 `;
+
+// ── Tech Stacks ───────────────────────────────────────────────────────────────
+
+export const getAllTechStacks = groq`
+  *[_type == "techStack"]
+  | order(category asc, proficiency desc) {
+    _id,
+    name,
+    category,
+    proficiency,
+    yearsUsed,
+    iconName
+  }
+`;

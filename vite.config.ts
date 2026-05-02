@@ -4,6 +4,9 @@ import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
 	plugins: [tailwindcss(), sveltekit()],
+	define: {
+		__DEPLOY_TIMESTAMP__: JSON.stringify(new Date().toISOString())
+	},
 	test: {
 		expect: { requireAssertions: true },
 		projects: [

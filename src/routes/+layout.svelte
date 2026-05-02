@@ -3,11 +3,12 @@
 	import favicon from '$lib/assets/favicon.svg';
 	import Nav from '$lib/components/Nav.svelte';
 	import Footer from '$lib/components/Footer.svelte';
+	import LenisProvider from '$lib/components/LenisProvider.svelte';
+	import type { LayoutData } from './$types';
 
-	let { children } = $props();
+	let { children, data }: { children: import('svelte').Snippet; data: LayoutData } = $props();
 
 	type Theme = 'dark' | 'light';
-
 	let theme = $state<Theme>('dark');
 
 	$effect(() => {
@@ -23,27 +24,26 @@
 		localStorage.setItem('theme', next);
 		document.documentElement.setAttribute('data-theme', next);
 	}
-
-	// Export so child routes can access if needed
-	export { setTheme };
 </script>
 
 <svelte:head>
 	<link rel="icon" href={favicon} />
 </svelte:head>
 
-<a href="#main-content" class="skip-to-content"> Skip to content </a>
+<a href="#main-content" class="skip-to-content">Skip to content</a>
 
 <!-- Film grain overlay — non-negotiable atmosphere layer -->
 <div class="film-grain" aria-hidden="true"></div>
 
-<Nav />
+<LenisProvider>
+	<Nav settings={data.settings} />
 
-<main id="main-content">
-	{@render children()}
-</main>
+	<main id="main-content">
+		{@render children()}
+	</main>
 
-<Footer />
+	<Footer settings={data.settings} {theme} onThemeChange={setTheme} />
+</LenisProvider>
 
 <style>
 	.skip-to-content {
