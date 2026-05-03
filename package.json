@@ -72,9 +72,12 @@
 		"lucide-svelte": "^1.0.1",
 		"posthog-js": "^1.372.5",
 		"posthog-node": "^5.32.0",
+		"resend": "^6.12.2",
 		"sanity": "^5.23.0",
 		"shiki": "^4.0.2",
+		"sveltekit-superforms": "^2.30.1",
 		"three": "^0.184.0",
-		"threlte": "^3.13.1"
+		"threlte": "^3.13.1",
+		"zod": "^3"
 	}
 }

@@ -8,6 +8,7 @@
 	import RootCanvas from '$lib/three/Canvas.svelte';
 	import { getHeroEl } from '$lib/three/heroTarget.svelte.js';
 	import { page } from '$app/state';
+	import { getFormActive } from '$lib/stores/formActive.svelte';
 	import type { LayoutData } from './$types';
 
 	let { children, data }: { children: import('svelte').Snippet; data: LayoutData } = $props();
@@ -34,6 +35,11 @@
 	let showParticleField = $derived(
 		!page.url.pathname.startsWith('/lab') && !page.url.pathname.startsWith('/work/')
 	);
+
+	// On /contact, fade particle field when form is focused
+	let particleOpacity = $derived(
+		page.url.pathname === '/contact' && getFormActive() ? 0 : 0.18
+	);
 </script>
 
 <svelte:head>
@@ -46,20 +52,23 @@
 <div class="film-grain" aria-hidden="true"></div>
 
 <!-- Root Three.js canvas — one per app, fixed behind all content -->
-<ClientOnly>
-	<RootCanvas>
-		{#if showParticleField}
-			{#await import('$lib/three/scenes/ParticleField.svelte') then { default: ParticleField }}
-				<ParticleField />
-			{/await}
-		{/if}
-		{#if getHeroEl()}
-			{#await import('$lib/three/scenes/HeroScene.svelte') then { default: HeroScene }}
-				<HeroScene dom={getHeroEl()} />
-			{/await}
-		{/if}
-	</RootCanvas>
-</ClientOnly>
+<!-- particle-wrap fades to 0 when /contact form is focused -->
+<div class="particle-wrap" style:opacity={particleOpacity} aria-hidden="true">
+	<ClientOnly>
+		<RootCanvas>
+			{#if showParticleField}
+				{#await import('$lib/three/scenes/ParticleField.svelte') then { default: ParticleField }}
+					<ParticleField />
+				{/await}
+			{/if}
+			{#if getHeroEl()}
+				{#await import('$lib/three/scenes/HeroScene.svelte') then { default: HeroScene }}
+					<HeroScene dom={getHeroEl()} />
+				{/await}
+			{/if}
+		</RootCanvas>
+	</ClientOnly>
+</div>
 
 <LenisProvider>
 	<div class="layout-shell">
@@ -99,6 +108,10 @@
 		min-height: 100dvh;
 		display: flex;
 		flex-direction: column;
+	}
+
+	.particle-wrap {
+		transition: opacity 480ms var(--ease-ui);
 	}
 
 	.film-grain {
