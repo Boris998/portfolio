@@ -1,8 +1,10 @@
 <script lang="ts">
-	/** Hero — asymmetric 60/40 split, availability note, H1, GoldRule, subheadline, CTAs, 3D placeholder. */
+	/** Hero — asymmetric 60/40 split, availability note, H1, GoldRule, subheadline, CTAs, 3D sculpture. */
 	import GoldRule from '$lib/components/GoldRule.svelte';
 	import AvailabilityNote from '$lib/components/AvailabilityNote.svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
+	import { reducedMotion } from '$lib/three/hooks/useReducedMotion.js';
+	import { heroTarget } from '$lib/three/heroTarget.svelte.js';
 	import type { Settings } from '$lib/sanity/types';
 
 	interface Props {
@@ -13,6 +15,20 @@
 
 	const headline = $derived(settings?.heroHeadline ?? 'Building things of enduring value.');
 	const subheadline = $derived(settings?.heroSubheadline ?? 'Full-stack developer and CRO specialist. Three years of production work and a quieter discipline of measurement that runs underneath all of it.');
+
+	// Sculpture container — registered into heroTarget so the Canvas-resident HeroScene can read it
+	let sculptureContainer = $state<HTMLElement | null>(null);
+	$effect(() => {
+		heroTarget.set(sculptureContainer);
+		return () => heroTarget.set(null);
+	});
+
+	// Reduced-motion: read from store reactively
+	let isReducedMotion = $state(false);
+	$effect(() => {
+		const unsub = reducedMotion.subscribe((v) => { isReducedMotion = v; });
+		return unsub;
+	});
 </script>
 
 <section class="hero" aria-labelledby="hero-heading">
@@ -32,7 +48,7 @@
 
 			<p class="hero-sub">{subheadline}</p>
 
-			<div class="cta-row">
+			<div id="hero-ctas" class="cta-row">
 				<Button
 					href="/work"
 					class="cta-primary"
@@ -46,9 +62,30 @@
 			<p class="caption" aria-hidden="true">3+ YEARS · FULL-STACK · CRO · SKOPJE</p>
 		</div>
 
-		<!-- Right: 3D sculpture placeholder (cols 8-12) -->
-		<div class="hero-placeholder" aria-hidden="true">
-			<span class="placeholder-label">[ HERO SCULPTURE — Sprint 3 ]</span>
+		<!-- Right: 3D sculpture (cols 8-12) -->
+		<div class="hero-sculpture-col">
+			<!-- Skip link for keyboard users — visible on focus only -->
+			<a href="#hero-ctas" class="skip-sculpture" aria-label="Skip 3D scene">Skip 3D scene</a>
+
+			<!-- Visually-hidden description for screen readers -->
+			<span class="sr-only">
+				A 3D sculptural form, rendered in warm studio lighting and rotating slowly. The form embodies the studio's commitment to considered software.
+			</span>
+
+			<!-- The View target — HeroScene (in the root Canvas) portals into this div -->
+			<div
+				bind:this={sculptureContainer}
+				class="hero-placeholder"
+				aria-hidden="true"
+			>
+				{#if isReducedMotion}
+					<img
+						src="/fallbacks/hero-sculpture.jpg"
+						alt="A warm-toned sculptural form in studio light"
+						class="fallback-img"
+					/>
+				{/if}
+			</div>
 		</div>
 	</div>
 </section>
@@ -162,25 +199,61 @@
 		margin-top: 64px;
 	}
 
-	/* 3D placeholder */
+	/* Sculpture column wrapper */
+	.hero-sculpture-col {
+		position: relative;
+	}
+
+	/* Skip link — visible only when focused */
+	.skip-sculpture {
+		position: absolute;
+		top: -100%;
+		left: 0;
+		z-index: 10;
+		padding: 0.4rem 0.8rem;
+		background: var(--color-accent-deep);
+		color: var(--color-bg);
+		font-family: var(--font-mono);
+		font-size: 11px;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		text-decoration: none;
+		border-radius: var(--radius);
+		transition: top 120ms var(--ease-ui);
+	}
+
+	.skip-sculpture:focus {
+		top: 0.5rem;
+	}
+
+	/* Screen-reader only */
+	.sr-only {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip: rect(0, 0, 0, 0);
+		white-space: nowrap;
+		border-width: 0;
+	}
+
+	/* 3D sculpture container — stable dimensions, no layout shift */
 	.hero-placeholder {
 		aspect-ratio: 4 / 5;
 		background: radial-gradient(ellipse at center, var(--color-bg-elevated) 0%, var(--color-bg) 100%);
 		border: 1px solid var(--color-hairline);
 		border-radius: var(--radius);
-		display: flex;
-		align-items: center;
-		justify-content: center;
+		position: relative;
+		overflow: hidden;
 	}
 
-	.placeholder-label {
-		font-family: var(--font-mono);
-		font-size: 12px;
-		letter-spacing: 0.12em;
-		text-transform: uppercase;
-		color: var(--color-text-subtle);
-		text-align: center;
-		padding: 1rem;
+	.fallback-img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		border-radius: var(--radius);
 	}
 
 	@media (max-width: 767px) {

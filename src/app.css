@@ -72,7 +72,7 @@
 
 /* ─── Light mode overrides ──────────────────────────────────── */
 [data-theme='light'] {
-	--color-bg: oklch(0.97 0.008 80);
+	--color-bg: oklch(0.97 0.1 80);
 	--color-bg-elevated: oklch(1 0 0);
 	--color-surface-paper: oklch(0.95 0.012 80);
 	--color-text: oklch(0.22 0.005 60);
@@ -87,10 +87,11 @@
 @layer base {
 	html {
 		scroll-behavior: auto;
+		background: var(--color-bg);
 	}
 
 	body {
-		background: var(--color-bg);
+		background: transparent;
 		color: var(--color-text);
 		font-family: var(--font-sans);
 		font-size: 17px;
@@ -102,6 +103,10 @@
 
 	* {
 		border-color: var(--color-hairline);
+	}
+
+	main {
+		flex: 1;
 	}
 
 	::selection {

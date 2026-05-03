@@ -17,20 +17,15 @@
 		{ href: '/about', label: 'About' },
 		{ href: '/lab', label: 'Lab' },
 		{ href: '/writing', label: 'Writing' },
-		{ href: '#contact', label: 'Contact' }
+		{ href: '/contact', label: 'Contact' }
 	];
 
 	let scrolled = $state(false);
-	let hidden = $state(false);
 	let mobileOpen = $state(false);
-	let lastY = $state(0);
 
 	onMount(() => {
 		function onScroll() {
-			const y = window.scrollY;
-			scrolled = y > 8;
-			hidden = y > lastY && y > 80;
-			lastY = y;
+			scrolled = window.scrollY > 8;
 		}
 		window.addEventListener('scroll', onScroll, { passive: true });
 		return () => window.removeEventListener('scroll', onScroll);
@@ -66,7 +61,6 @@
 	aria-label="Main navigation"
 	class="nav"
 	class:scrolled
-	class:hidden
 >
 	<div class="nav-inner">
 		<!-- Monogram -->
@@ -148,7 +142,9 @@
 		top: 0;
 		z-index: 100;
 		height: 72px;
-		background: var(--color-bg);
+		background: oklch(0.18 0.009 65 / 0.72);
+		backdrop-filter: blur(16px) saturate(1.2);
+		-webkit-backdrop-filter: blur(16px) saturate(1.2);
 		border-bottom: 1px solid transparent;
 		transform: translateY(0);
 		transition:
@@ -160,9 +156,6 @@
 		border-bottom-color: var(--color-hairline);
 	}
 
-	.nav.hidden {
-		transform: translateY(-100%);
-	}
 
 	.nav-inner {
 		display: grid;

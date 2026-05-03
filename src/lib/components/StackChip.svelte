@@ -11,18 +11,20 @@
 	let { tech, size = 'md' }: Props = $props();
 </script>
 
-<Tooltip.Root>
-	<Tooltip.Trigger>
-		<span class="stack-chip" class:size-sm={size === 'sm'}>
-			{tech.name}
-		</span>
-	</Tooltip.Trigger>
-	{#if tech.yearsUsed}
-		<Tooltip.Content>
-			<p>{tech.yearsUsed} {tech.yearsUsed === 1 ? 'year' : 'years'}</p>
-		</Tooltip.Content>
-	{/if}
-</Tooltip.Root>
+<Tooltip.Provider>
+	<Tooltip.Root>
+		<Tooltip.Trigger>
+			<span class="stack-chip" class:size-sm={size === 'sm'}>
+				{tech.name}
+			</span>
+		</Tooltip.Trigger>
+		{#if tech.yearsUsed}
+			<Tooltip.Content>
+				<p>{tech.yearsUsed} {tech.yearsUsed === 1 ? 'year' : 'years'}</p>
+			</Tooltip.Content>
+		{/if}
+	</Tooltip.Root>
+</Tooltip.Provider>
 
 <style>
 	.stack-chip {
@@ -37,10 +39,12 @@
 		color: var(--color-text-muted);
 		white-space: nowrap;
 		line-height: 1.4;
+		transition: border-color 200ms var(--ease-ui);
 	}
 
 	.size-sm {
 		font-size: 12px;
 		padding: 3px 8px;
+		border-radius: 0.25rem;
 	}
 </style>

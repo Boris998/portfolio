@@ -10,7 +10,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 		'Content-Security-Policy',
 		[
 			"default-src 'self'",
-			"script-src 'self' 'unsafe-inline' https://*.sentry.io https://eu.i.posthog.com",
+			"script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://*.sentry.io https://eu.i.posthog.com",
 			"style-src 'self' 'unsafe-inline'",
 			"font-src 'self' data:",
 			"img-src 'self' data: blob: https://*.sanity.io https://cdn.sanity.io",

@@ -40,7 +40,7 @@
 			<nav class="col" aria-label="Site map">
 				<p class="col-label">Sitemap</p>
 				<ul role="list">
-					{#each [['/', 'Home'], ['/work', 'Work'], ['/about', 'About'], ['/lab', 'Lab'], ['/writing', 'Writing'], ['/uses', 'Uses'], ['#contact', 'Contact']] as [href, label] (href)}
+					{#each [['/', 'Home'], ['/work', 'Work'], ['/about', 'About'], ['/lab', 'Lab'], ['/writing', 'Writing'], ['/uses', 'Uses'], ['/contact', 'Contact']] as [href, label] (href)}
 						<li><a {href} class="footer-link">{label}</a></li>
 					{/each}
 				</ul>
@@ -96,6 +96,8 @@
 	.footer {
 		padding: 8rem 0;
 		border-top: 1px solid var(--color-hairline);
+		position: relative;
+		overflow: hidden;
 	}
 
 	.footer-inner {
@@ -162,6 +164,19 @@
 		justify-content: space-between;
 		padding-top: 2rem;
 		border-top: 1px solid var(--color-hairline);
+		position: relative;
+	}
+
+	.footer-bottom::after {
+		content: '';
+		position: absolute;
+		bottom: -8rem;
+		left: -100vw;
+		right: -100vw;
+		height: 14rem;
+		background: linear-gradient(to bottom, transparent, oklch(1 0 0 / 0.15));
+		pointer-events: none;
+		z-index: 0;
 	}
 
 	.monogram {

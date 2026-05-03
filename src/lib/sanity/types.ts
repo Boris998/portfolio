@@ -1071,6 +1071,18 @@ export type GetTestimonialsResult = Array<{
 	relatedProject?: ProjectReference;
 }>;
 
+// Source: src/lib/sanity/queries.ts
+// Variable: getAllTechStacks
+// Query: *[_type == "techStack"]  | order(category asc, proficiency desc) {    _id,    name,    category,    proficiency,    yearsUsed,    iconName  }
+export type GetAllTechStacksResult = Array<{
+	_id: string;
+	name: string | null;
+	category: 'backend' | 'db' | 'frontend' | 'infra' | 'lang' | 'tooling' | null;
+	proficiency: 'expert' | 'fluent' | 'learning' | 'working' | null;
+	yearsUsed: number | null;
+	iconName: string | null;
+}>;
+
 // Query TypeMap
 import '@sanity/client';
 declare module '@sanity/client' {
@@ -1084,5 +1096,6 @@ declare module '@sanity/client' {
 		'\n  *[_type == "post"]\n  | order(publishedAt desc) {\n    title,\n    slug,\n    excerpt,\n    coverImage,\n    publishedAt,\n    readTime,\n    tags\n  }\n': GetAllPostsResult;
 		'\n  *[_type == "post" && slug.current == $slug][0]\n': GetPostBySlugResult;
 		'\n  *[_type == "testimonial" && ($featured == null || featured == $featured)]\n  | order(_createdAt desc)\n': GetTestimonialsResult;
+		'\n  *[_type == "techStack"]\n  | order(category asc, proficiency desc) {\n    _id,\n    name,\n    category,\n    proficiency,\n    yearsUsed,\n    iconName\n  }\n': GetAllTechStacksResult;
 	}
 }

@@ -4,6 +4,10 @@
 	import Nav from '$lib/components/Nav.svelte';
 	import Footer from '$lib/components/Footer.svelte';
 	import LenisProvider from '$lib/components/LenisProvider.svelte';
+	import ClientOnly from '$lib/components/ClientOnly.svelte';
+	import RootCanvas from '$lib/three/Canvas.svelte';
+	import { getHeroEl } from '$lib/three/heroTarget.svelte.js';
+	import { page } from '$app/state';
 	import type { LayoutData } from './$types';
 
 	let { children, data }: { children: import('svelte').Snippet; data: LayoutData } = $props();
@@ -24,6 +28,12 @@
 		localStorage.setItem('theme', next);
 		document.documentElement.setAttribute('data-theme', next);
 	}
+
+	// Particle field is disabled on /lab and /work/* routes
+	// page from $app/state is a plain reactive object in Svelte 5 — read directly, no $ prefix
+	let showParticleField = $derived(
+		!page.url.pathname.startsWith('/lab') && !page.url.pathname.startsWith('/work/')
+	);
 </script>
 
 <svelte:head>
@@ -35,14 +45,32 @@
 <!-- Film grain overlay — non-negotiable atmosphere layer -->
 <div class="film-grain" aria-hidden="true"></div>
 
+<!-- Root Three.js canvas — one per app, fixed behind all content -->
+<ClientOnly>
+	<RootCanvas>
+		{#if showParticleField}
+			{#await import('$lib/three/scenes/ParticleField.svelte') then { default: ParticleField }}
+				<ParticleField />
+			{/await}
+		{/if}
+		{#if getHeroEl()}
+			{#await import('$lib/three/scenes/HeroScene.svelte') then { default: HeroScene }}
+				<HeroScene dom={getHeroEl()} />
+			{/await}
+		{/if}
+	</RootCanvas>
+</ClientOnly>
+
 <LenisProvider>
-	<Nav settings={data.settings} />
+	<div class="layout-shell">
+		<Nav settings={data.settings} />
 
-	<main id="main-content">
-		{@render children()}
-	</main>
+		<main id="main-content">
+			{@render children()}
+		</main>
 
-	<Footer settings={data.settings} {theme} onThemeChange={setTheme} />
+		<Footer settings={data.settings} {theme} onThemeChange={setTheme} />
+	</div>
 </LenisProvider>
 
 <style>
@@ -65,6 +93,12 @@
 
 	.skip-to-content:focus {
 		top: 1rem;
+	}
+
+	.layout-shell {
+		min-height: 100dvh;
+		display: flex;
+		flex-direction: column;
 	}
 
 	.film-grain {

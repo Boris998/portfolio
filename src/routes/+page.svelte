@@ -60,7 +60,9 @@
 	{@html `<script type="application/ld+json">${JSON.stringify(jsonLd)}<\/script>`}
 </svelte:head>
 
-<HeroSection settings={data.settings} />
+<div class="section-tinted">
+	<HeroSection settings={data.settings} />
+</div>
 
 <div class="hairline" role="separator" aria-hidden="true"></div>
 
@@ -68,7 +70,9 @@
 
 <div class="hairline" role="separator" aria-hidden="true"></div>
 
-<SelectedWorkSection projects={featuredProjects} />
+<div class="section-tinted">
+	<SelectedWorkSection projects={featuredProjects} />
+</div>
 
 <div class="hairline" role="separator" aria-hidden="true"></div>
 
@@ -76,7 +80,9 @@
 
 <div class="hairline" role="separator" aria-hidden="true"></div>
 
-<LabWhisperSection />
+<div class="section-tinted">
+	<LabWhisperSection />
+</div>
 
 <div class="hairline" role="separator" aria-hidden="true"></div>
 
@@ -85,12 +91,32 @@
 	<div class="hairline" role="separator" aria-hidden="true"></div>
 {/if}
 
-<ContactSection settings={data.settings} />
+<div class="section-tinted">
+	<ContactSection settings={data.settings} />
+</div>
 
 <style>
 	.hairline {
 		width: 100%;
 		height: 1px;
 		background: var(--color-hairline);
+	}
+
+	.section-tinted {
+		position: relative;
+	}
+
+	.section-tinted::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: oklch(1 0 0 / 0.02);
+		pointer-events: none;
+		z-index: 0;
+	}
+
+	.section-tinted > :global(*) {
+		position: relative;
+		z-index: 1;
 	}
 </style>

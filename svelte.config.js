@@ -9,6 +9,10 @@ const config = {
 		adapter: adapterVercel(),
 		alias: {
 			$lib: 'src/lib'
+		},
+		prerender: {
+			handleMissingId: 'warn',
+			handleUnseenRoutes: 'warn'
 		}
 	}
 };
